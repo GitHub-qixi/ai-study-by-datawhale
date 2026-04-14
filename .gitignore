@@ -129,4 +129,5 @@ cython_debug/
 # idea vscode cursor
 .idea
 .vscode
-.cursor/
+.cursor
+.qwen
