@@ -2,3 +2,5 @@ openai
 requests
 tavily-python
 python-dotenv
+google-search-results
+
