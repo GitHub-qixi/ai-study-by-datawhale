@@ -130,4 +130,4 @@ cython_debug/
 .idea
 .vscode
 .cursor
-.qwen
+.lingma
