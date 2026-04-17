@@ -131,3 +131,4 @@ cython_debug/
 .vscode
 .cursor
 .qwen
+.trae
