@@ -130,6 +130,5 @@ cython_debug/
 .idea
 .vscode
 .cursor
-.lingma
 .qwen
 .trae
