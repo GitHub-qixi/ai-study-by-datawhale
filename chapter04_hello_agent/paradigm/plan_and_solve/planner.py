@@ -1,8 +1,8 @@
 import ast
 
 # 假定 llm_client.py 中的 HelloAgentsLLM 类已经定义好
-from hello_agent.llm_client.openai_client import HelloAgentsLLM
-from hello_agent.paradigm.plan_and_solve.system_prompt import PLANNER_PROMPT_TEMPLATE
+from chapter04_hello_agent.llm_client.openai_client import HelloAgentsLLM
+from chapter04_hello_agent.paradigm.plan_and_solve.system_prompt import PLANNER_PROMPT_TEMPLATE
 
 class Planner:
     def __init__(self, llm_client):

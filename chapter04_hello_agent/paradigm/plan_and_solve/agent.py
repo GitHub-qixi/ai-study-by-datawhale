@@ -1,6 +1,6 @@
-from hello_agent.paradigm.plan_and_solve.planner import Planner
-from hello_agent.paradigm.plan_and_solve.solver import Executor
-from hello_agent.llm_client.openai_client import HelloAgentsLLM
+from chapter04_hello_agent.paradigm.plan_and_solve.planner import Planner
+from chapter04_hello_agent.paradigm.plan_and_solve.solver import Executor
+from chapter04_hello_agent.llm_client.openai_client import HelloAgentsLLM
 class PlanAndSolveAgent:
     def __init__(self, llm_client):
         """

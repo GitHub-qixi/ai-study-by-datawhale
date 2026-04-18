@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 # 假设 llm_client.py 文件已存在，并从中导入 HelloAgentsLLM 类
-from hello_agent.llm_client.openai_client import HelloAgentsLLM
+from chapter04_hello_agent.llm_client.openai_client import HelloAgentsLLM
 
 
 # --- 模块 1: 记忆模块 ---

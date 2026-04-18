@@ -1,4 +1,4 @@
-from hello_agent.paradigm.plan_and_solve.system_prompt import EXECUTOR_PROMPT_TEMPLATE
+from chapter04_hello_agent.paradigm.plan_and_solve.system_prompt import EXECUTOR_PROMPT_TEMPLATE
 
 
 class Executor:

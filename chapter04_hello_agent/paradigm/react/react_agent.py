@@ -6,11 +6,11 @@
 @Date ：2026/4/14 23:54
 @Desc : 添加描述
 """
-from hello_agent.llm_client.openai_client import HelloAgentsLLM
-from hello_agent.paradigm.react.system_prompt import REACT_PROMPT_TEMPLATE
-from hello_agent.tool.registrate_tool import ToolExecutor
+from chapter04_hello_agent.llm_client.openai_client import HelloAgentsLLM
+from chapter04_hello_agent.paradigm.react.system_prompt import REACT_PROMPT_TEMPLATE
+from chapter04_hello_agent.tool.registrate_tool import ToolExecutor
 import re
-from hello_agent.tool.google_tool.google_search import search
+from chapter04_hello_agent.tool.google_tool.google_search import search
 
 
 
