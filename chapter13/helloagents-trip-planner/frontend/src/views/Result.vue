@@ -2,19 +2,19 @@
   <div class="result-container">
     <!-- 页面头部 -->
     <div class="page-header">
-      <a-button class="back-button" size="large" @click="goBack">
+      <button class="ghost-button back-button" @click="goBack">
         ← 返回首页
-      </a-button>
+      </button>
       <a-space size="middle">
-        <a-button v-if="!editMode" @click="toggleEditMode" type="default">
+        <button v-if="!editMode" @click="toggleEditMode" class="ghost-button">
           ✏️ 编辑行程
-        </a-button>
-        <a-button v-else @click="saveChanges" type="primary">
+        </button>
+        <button v-else @click="saveChanges" class="ghost-button">
           💾 保存修改
-        </a-button>
-        <a-button v-if="editMode" @click="cancelEdit" type="default">
+        </button>
+        <button v-if="editMode" @click="cancelEdit" class="ghost-button">
           ❌ 取消编辑
-        </a-button>
+        </button>
 
         <!-- 导出按钮 -->
         <a-dropdown v-if="!editMode">
@@ -28,14 +28,21 @@
               </a-menu-item>
             </a-menu>
           </template>
-          <a-button type="default">
+          <button class="ghost-button">
             📥 导出行程 <DownOutlined />
-          </a-button>
+          </button>
         </a-dropdown>
       </a-space>
     </div>
 
     <div v-if="tripPlan" class="content-wrapper">
+      <!-- 滚动提示（仅在首屏显示） -->
+      <div v-if="showScrollHint" class="scroll-hint-overlay" @click="hideScrollHint">
+        <div class="scroll-hint-content">
+          <span class="scroll-hint-text">↓ 向下滚动查看详情</span>
+        </div>
+      </div>
+      
       <!-- 侧边导航 -->
       <div class="side-nav">
         <a-affix :offset-top="80">
@@ -254,7 +261,7 @@
           </a-collapse>
         </a-card>
 
-        <a-card id="weather" v-if="tripPlan.weather_info && tripPlan.weather_info.length > 0" title="天气信息" style="margin-top: 20px" :bordered="false">
+        <a-card id="weather" v-if="tripPlan.weather_info && tripPlan.weather_info.length > 0" title="天气信息" class="weather-section-card" :bordered="false">
         <a-list
           :data-source="tripPlan.weather_info"
           :grid="{ gutter: 16, column: 3 }"
@@ -324,6 +331,7 @@ const originalPlan = ref<TripPlan | null>(null)
 const attractionPhotos = ref<Record<string, string>>({})
 const activeSection = ref('overview')
 const activeDays = ref<number[]>([0]) // 默认展开第一天
+const showScrollHint = ref(true) // 控制滚动提示显示
 let map: any = null
 
 onMounted(async () => {
@@ -340,6 +348,11 @@ onMounted(async () => {
 
 const goBack = () => {
   router.push('/')
+}
+
+// 隐藏滚动提示
+const hideScrollHint = () => {
+  showScrollHint.value = false
 }
 
 // 滚动到指定区域
@@ -959,22 +972,64 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 <style scoped>
 .result-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-color: #000000;
   padding: 40px 20px;
 }
 
 .page-header {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  animation: fadeInDown 0.6s ease-out;
 }
 
 .back-button {
-  border-radius: 8px;
-  font-weight: 500;
+  font-size: 13px;
+}
+
+/* 滚动提示 */
+.scroll-hint-overlay {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeInUp 1s ease-out 1s both;
+}
+
+.scroll-hint-content {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  padding: 12px 24px;
+  border-radius: 32px;
+  transition: all 0.3s ease;
+}
+
+.scroll-hint-content:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(240, 240, 250, 0.6);
+}
+
+.scroll-hint-text {
+  font-family: 'D-DIN', 'Arial', sans-serif;
+  font-size: 10px;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* 内容布局 */
@@ -991,169 +1046,42 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 }
 
 .side-nav :deep(.ant-menu) {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  background: white;
+  background: transparent;
+  border: none;
 }
 
 .side-nav :deep(.ant-menu-item) {
-  margin: 4px 8px;
-  border-radius: 8px;
+  margin: 4px 0;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
+  font-weight: 700;
+  border-left: 2px solid transparent;
   transition: all 0.3s ease;
 }
 
 .side-nav :deep(.ant-menu-item-selected) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: transparent;
+  color: #f0f0fa;
+  border-left-color: #f0f0fa;
 }
 
 .side-nav :deep(.ant-menu-item:hover) {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(240, 240, 250, 0.1);
+}
+
+.side-nav :deep(.ant-menu-submenu-title) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .main-content {
   flex: 1;
   min-width: 0;
-}
-
-/* 景点图片样式 */
-.attraction-image-wrapper {
-  position: relative;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.attraction-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.attraction-image-wrapper:hover .attraction-image {
-  transform: scale(1.05);
-}
-
-.attraction-badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.badge-number {
-  font-size: 18px;
-}
-
-.price-tag {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(255, 77, 79, 0.9);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* 天气卡片样式 */
-.weather-card {
-  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
-  border: none !important;
-  transition: all 0.3s ease;
-}
-
-.weather-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.weather-date {
-  font-size: 16px;
-  font-weight: bold;
-  color: #00796b;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.weather-info-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.weather-icon {
-  font-size: 24px;
-}
-
-.weather-label {
-  font-size: 12px;
-  color: #666;
-}
-
-.weather-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #00796b;
-}
-
-.weather-wind {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(0, 121, 107, 0.2);
-  text-align: center;
-  color: #00796b;
-  font-size: 14px;
-}
-
-/* 回到顶部按钮 */
-.back-top-button {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.back-top-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-/* 酒店卡片样式 */
-.hotel-card {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  border: none !important;
-}
-
-.hotel-card :deep(.ant-card-head) {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-}
-
-.hotel-title {
-  color: white !important;
-  font-weight: 600;
 }
 
 /* 顶部信息区布局 */
@@ -1175,8 +1103,34 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 }
 
 /* 行程概览卡片 */
-.overview-card {
-  height: fit-content;
+.overview-card,
+.budget-card,
+.map-card,
+.days-card {
+  background: transparent !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+}
+
+.overview-card :deep(.ant-card-head),
+.budget-card :deep(.ant-card-head),
+.map-card :deep(.ant-card-head),
+.days-card :deep(.ant-card-head) {
+  background: transparent;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+}
+
+.overview-card :deep(.ant-card-head-title),
+.budget-card :deep(.ant-card-head-title),
+.map-card :deep(.ant-card-head-title),
+.days-card :deep(.ant-card-head-title) {
+  color: #f0f0fa !important;
+  font-size: 18px;
 }
 
 .overview-content {
@@ -1192,22 +1146,22 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 }
 
 .info-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 .info-value {
-  font-size: 15px;
-  color: #333;
+  font-size: 13px;
+  color: #f0f0fa;
   line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 /* 预算卡片 */
-.budget-card {
-  height: fit-content;
-}
-
 .budget-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1218,21 +1172,23 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 .budget-item {
   text-align: center;
   padding: 12px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-  border-radius: 8px;
-  border: 1px solid #e8e8e8;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
 }
 
 .budget-label {
   font-size: 13px;
-  color: #666;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
   margin-bottom: 8px;
 }
 
 .budget-value {
   font-size: 20px;
   font-weight: 700;
-  color: #1890ff;
+  color: #f0f0fa;
 }
 
 .budget-total {
@@ -1240,14 +1196,17 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 8px;
-  color: white;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
+  color: #f0f0fa;
 }
 
 .total-label {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 .total-value {
@@ -1280,21 +1239,25 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 
 .day-title {
   font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 .day-date {
-  font-size: 14px;
-  color: #999;
+  font-size: 13px;
+  color: rgba(240, 240, 250, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 .day-info {
   margin-bottom: 20px;
   padding: 16px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-  border-radius: 8px;
-  border: 1px solid #e8e8e8;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
 }
 
 .info-row {
@@ -1308,43 +1271,20 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 }
 
 .info-row .label {
-  font-weight: 600;
-  color: #666;
+  font-weight: 700;
+  color: #f0f0fa;
   min-width: 100px;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
 }
 
 .info-row .value {
-  color: #333;
+  color: #f0f0fa;
   flex: 1;
-}
-
-/* 卡片样式优化 */
-:deep(.ant-card) {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-:deep(.ant-card:hover) {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-:deep(.ant-card-head) {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white !important;
-  border-radius: 12px 12px 0 0;
-  font-weight: 600;
-}
-
-:deep(.ant-card-head-title) {
-  color: white !important;
-  font-size: 18px;
-}
-
-:deep(.ant-card-head-title span) {
-  color: white !important;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
 }
 
 /* Collapse样式 */
@@ -1355,71 +1295,371 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 
 :deep(.ant-collapse-item) {
   margin-bottom: 16px;
-  border: 1px solid #e8e8e8;
-  border-radius: 12px;
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
   overflow: hidden;
+  background: transparent;
 }
 
 :deep(.ant-collapse-header) {
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  background: rgba(240, 240, 250, 0.1);
   padding: 16px 20px !important;
-  font-weight: 600;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 :deep(.ant-collapse-content) {
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid rgba(240, 240, 250, 0.35);
+  background: transparent;
 }
 
 :deep(.ant-collapse-content-box) {
   padding: 20px;
 }
 
-/* 统计卡片样式 */
-:deep(.ant-statistic-title) {
+/* 景点卡片样式 */
+.attraction-card {
+  background: transparent !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+}
+
+.attraction-card :deep(.ant-card-head) {
+  background: transparent;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+}
+
+.attraction-card :deep(.ant-card-head-title) {
+  color: #f0f0fa !important;
+  font-size: 16px;
+}
+
+.attraction-image-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.attraction-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.attraction-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(240, 240, 250, 0.9);
+  color: #000000;
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.badge-number {
+  font-size: 18px;
+}
+
+.price-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(240, 240, 250, 0.9);
+  color: #000000;
+  padding: 4px 12px;
+  border-radius: 0;
+  font-weight: 700;
   font-size: 14px;
-  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+/* 酒店卡片样式 */
+.hotel-card {
+  background: transparent !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+}
+
+.hotel-card :deep(.ant-card-head) {
+  background: transparent;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.35);
+}
+
+.hotel-title {
+  color: #f0f0fa !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.hotel-card :deep(.ant-descriptions-item-label) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.hotel-card :deep(.ant-descriptions-item-content) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
+}
+
+/* 天气卡片样式 */
+.weather-section-card {
+  margin-top: 20px;
+  background: transparent !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.weather-section-card :deep(.ant-card-head) {
+  background: transparent;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+}
+
+.weather-section-card :deep(.ant-card-head-title) {
+  color: #f0f0fa !important;
+  font-size: 18px;
+}
+
+.weather-section-card :deep(.ant-card-body) {
+  background: transparent;
+}
+
+.weather-card {
+  background: rgba(240, 240, 250, 0.05);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.weather-card:hover {
+  background: rgba(240, 240, 250, 0.1);
+  border-color: rgba(240, 240, 250, 0.6);
+}
+
+.weather-date {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f0fa;
+  margin-bottom: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.weather-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 8px;
 }
 
-:deep(.ant-statistic-content) {
+.weather-icon {
   font-size: 24px;
-  font-weight: 600;
-  color: #1890ff;
 }
 
-/* 景点卡片样式 */
+.weather-label {
+  font-size: 13px;
+  color: rgba(240, 240, 250, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.weather-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+.weather-wind {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(240, 240, 250, 0.35);
+  text-align: center;
+  color: #f0f0fa;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+/* Divider样式 */
+:deep(.ant-divider) {
+  border-color: rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+}
+
+:deep(.ant-divider-inner-text) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Descriptions样式 */
+:deep(.ant-descriptions-item-label) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+:deep(.ant-descriptions-item-content) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-size: 13px;
+}
+
+:deep(.ant-descriptions-bordered .ant-descriptions-view) {
+  border: 1px solid rgba(240, 240, 250, 0.35);
+}
+
+:deep(.ant-descriptions-bordered .ant-descriptions-item-label),
+:deep(.ant-descriptions-bordered .ant-descriptions-item-content) {
+  border-color: rgba(240, 240, 250, 0.35);
+}
+
+/* List样式 */
 :deep(.ant-list-item) {
   transition: all 0.3s ease;
 }
 
 :deep(.ant-list-item:hover) {
-  transform: scale(1.02);
+  background: rgba(240, 240, 250, 0.05);
 }
 
-/* 动画 */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Button overrides */
+:deep(.ant-btn) {
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  border-radius: 32px;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  font-weight: 700;
+  font-size: 13px;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+:deep(.ant-btn:hover) {
+  background: rgba(240, 240, 250, 0.2);
+  border-color: #f0f0fa;
+  color: #f0f0fa;
 }
 
-/* 响应式设计 */
+:deep(.ant-btn-primary) {
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+}
+
+:deep(.ant-btn-primary:hover) {
+  background: rgba(240, 240, 250, 0.2);
+  border-color: #f0f0fa;
+}
+
+/* Dropdown menu */
+:deep(.ant-dropdown-menu) {
+  background: #000000;
+  border: 1px solid rgba(240, 240, 250, 0.35);
+}
+
+:deep(.ant-dropdown-menu-item) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+:deep(.ant-dropdown-menu-item:hover) {
+  background: rgba(240, 240, 250, 0.1);
+}
+
+/* Input number */
+:deep(.ant-input-number) {
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  border-radius: 4px;
+}
+
+:deep(.ant-input-number-input) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+:deep(.ant-input-number-handler-wrap) {
+  background: rgba(240, 240, 250, 0.1);
+  border-left: 1px solid rgba(240, 240, 250, 0.35);
+}
+
+:deep(.ant-input-number-handler-up-inner),
+:deep(.ant-input-number-handler-down-inner) {
+  color: #f0f0fa;
+}
+
+/* Back top button */
+.back-top-button {
+  width: 50px;
+  height: 50px;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  color: #f0f0fa;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-top-button:hover {
+  background: rgba(240, 240, 250, 0.2);
+  border-color: #f0f0fa;
+}
+
+/* Empty state */
+:deep(.ant-empty-description) {
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .result-container {
     padding: 20px 10px;
@@ -1428,6 +1668,22 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
   .page-header {
     flex-direction: column;
     gap: 16px;
+  }
+
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .side-nav {
+    width: 100%;
+  }
+
+  .top-info-section {
+    flex-direction: column;
+  }
+
+  .left-info {
+    flex: 1;
   }
 }
 </style>

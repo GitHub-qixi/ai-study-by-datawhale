@@ -1,32 +1,37 @@
 <template>
   <div class="home-container">
-    <!-- 背景装饰 -->
-    <div class="bg-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
+    <!-- 背景摄影 -->
+    <div class="hero-background">
+      <div class="dark-overlay"></div>
     </div>
 
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <div class="icon-wrapper">
-        <span class="icon">✈️</span>
+    <!-- 页面标题 - 全视口英雄区 -->
+    <div class="hero-section full-viewport">
+      <div class="hero-content">
+        <h1 class="hero-title">智能旅行助手</h1>
+        <p class="hero-subtitle">基于AI的个性化旅行规划,让每一次出行都完美无忧</p>
       </div>
-      <h1 class="page-title">智能旅行助手</h1>
-      <p class="page-subtitle">基于AI的个性化旅行规划,让每一次出行都完美无忧</p>
+      
+      <!-- 滚动指示器 -->
+      <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+        <span class="scroll-text">向下滚动</span>
+      </div>
     </div>
 
-    <a-card class="form-card" :bordered="false">
+    <!-- 表单区域 -->
+    <div class="form-section">
       <a-form
         :model="formData"
         layout="vertical"
         @finish="handleSubmit"
+        class="space-form"
       >
         <!-- 第一步:目的地和日期 -->
-        <div class="form-section">
-          <div class="section-header">
-            <span class="section-icon">📍</span>
-            <span class="section-title">目的地与日期</span>
+        <div class="form-group">
+          <div class="group-header">
+            <span class="group-icon">📍</span>
+            <span class="group-title">目的地与日期</span>
           </div>
 
           <a-row :gutter="24">
@@ -39,12 +44,8 @@
                   v-model:value="formData.city"
                   placeholder="例如: 北京"
                   size="large"
-                  class="custom-input"
-                >
-                  <template #prefix>
-                    <span style="color: #1890ff;">🏙️</span>
-                  </template>
-                </a-input>
+                  class="space-input"
+                />
               </a-form-item>
             </a-col>
             <a-col :span="6">
@@ -56,7 +57,7 @@
                   v-model:value="formData.start_date"
                   style="width: 100%"
                   size="large"
-                  class="custom-input"
+                  class="space-input"
                   placeholder="选择日期"
                 />
               </a-form-item>
@@ -70,7 +71,7 @@
                   v-model:value="formData.end_date"
                   style="width: 100%"
                   size="large"
-                  class="custom-input"
+                  class="space-input"
                   placeholder="选择日期"
                 />
               </a-form-item>
@@ -80,7 +81,7 @@
                 <template #label>
                   <span class="form-label">旅行天数</span>
                 </template>
-                <div class="days-display-compact">
+                <div class="days-display">
                   <span class="days-value">{{ formData.travel_days }}</span>
                   <span class="days-unit">天</span>
                 </div>
@@ -90,10 +91,10 @@
         </div>
 
         <!-- 第二步:偏好设置 -->
-        <div class="form-section">
-          <div class="section-header">
-            <span class="section-icon">⚙️</span>
-            <span class="section-title">偏好设置</span>
+        <div class="form-group">
+          <div class="group-header">
+            <span class="group-icon">⚙️</span>
+            <span class="group-title">偏好设置</span>
           </div>
 
           <a-row :gutter="24">
@@ -102,7 +103,7 @@
                 <template #label>
                   <span class="form-label">交通方式</span>
                 </template>
-                <a-select v-model:value="formData.transportation" size="large" class="custom-select">
+                <a-select v-model:value="formData.transportation" size="large" class="space-select">
                   <a-select-option value="公共交通">🚇 公共交通</a-select-option>
                   <a-select-option value="自驾">🚗 自驾</a-select-option>
                   <a-select-option value="步行">🚶 步行</a-select-option>
@@ -115,7 +116,7 @@
                 <template #label>
                   <span class="form-label">住宿偏好</span>
                 </template>
-                <a-select v-model:value="formData.accommodation" size="large" class="custom-select">
+                <a-select v-model:value="formData.accommodation" size="large" class="space-select">
                   <a-select-option value="经济型酒店">💰 经济型酒店</a-select-option>
                   <a-select-option value="舒适型酒店">🏨 舒适型酒店</a-select-option>
                   <a-select-option value="豪华酒店">⭐ 豪华酒店</a-select-option>
@@ -144,10 +145,10 @@
         </div>
 
         <!-- 第三步:额外要求 -->
-        <div class="form-section">
-          <div class="section-header">
-            <span class="section-icon">💬</span>
-            <span class="section-title">额外要求</span>
+        <div class="form-group">
+          <div class="group-header">
+            <span class="group-icon">💬</span>
+            <span class="group-title">额外要求</span>
           </div>
 
           <a-form-item name="free_text_input">
@@ -156,29 +157,21 @@
               placeholder="请输入您的额外要求,例如:想去看升旗、需要无障碍设施、对海鲜过敏等..."
               :rows="3"
               size="large"
-              class="custom-textarea"
+              class="space-textarea"
             />
           </a-form-item>
         </div>
 
         <!-- 提交按钮 -->
         <a-form-item>
-          <a-button
-            type="primary"
-            html-type="submit"
-            :loading="loading"
-            size="large"
-            block
-            class="submit-button"
+          <button
+            type="submit"
+            :disabled="loading"
+            class="ghost-button submit-button"
           >
-            <template v-if="!loading">
-              <span class="button-icon">🚀</span>
-              <span>开始规划我的旅行</span>
-            </template>
-            <template v-else>
-              <span>正在生成中...</span>
-            </template>
-          </a-button>
+            <span v-if="!loading">开始规划我的旅行</span>
+            <span v-else>正在生成中...</span>
+          </button>
         </a-form-item>
 
         <!-- 加载进度条 -->
@@ -188,8 +181,8 @@
               :percent="loadingProgress"
               status="active"
               :stroke-color="{
-                '0%': '#667eea',
-                '100%': '#764ba2',
+                '0%': '#f0f0fa',
+                '100%': '#f0f0fa',
               }"
               :stroke-width="10"
             />
@@ -199,7 +192,7 @@
           </div>
         </a-form-item>
       </a-form>
-    </a-card>
+    </div>
   </div>
 </template>
 
@@ -318,215 +311,193 @@ const handleSubmit = async () => {
 <style scoped>
 .home-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 60px 20px;
+  background-color: #000000;
   position: relative;
-  overflow: hidden;
 }
 
-/* 背景装饰 */
-.bg-decoration {
+/* 背景摄影 */
+.hero-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.dark-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  overflow: hidden;
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  animation: float 20s infinite ease-in-out;
-}
-
-.circle-1 {
-  width: 300px;
-  height: 300px;
-  top: -100px;
-  left: -100px;
-  animation-delay: 0s;
-}
-
-.circle-2 {
-  width: 200px;
-  height: 200px;
-  top: 50%;
-  right: -50px;
-  animation-delay: 5s;
-}
-
-.circle-3 {
-  width: 150px;
-  height: 150px;
-  bottom: -50px;
-  left: 30%;
-  animation-delay: 10s;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-30px) rotate(180deg);
-  }
-}
-
-/* 页面标题 */
-.page-header {
-  text-align: center;
-  margin-bottom: 50px;
-  animation: fadeInDown 0.8s ease-out;
+/* 英雄区 */
+.hero-section {
   position: relative;
   z-index: 1;
-}
-
-.icon-wrapper {
-  margin-bottom: 20px;
-}
-
-.icon {
-  font-size: 80px;
-  display: inline-block;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-.page-title {
-  font-size: 56px;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 16px;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
-}
-
-.page-subtitle {
-  font-size: 20px;
-  color: rgba(255, 255, 255, 0.95);
-  margin: 0;
-  font-weight: 300;
-}
-
-/* 表单卡片 */
-.form-card {
-  max-width: 1400px;
-  margin: 0 auto;
-  border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-  animation: fadeInUp 0.8s ease-out;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.98) !important;
-}
-
-/* 表单分区 */
-.form-section {
-  margin-bottom: 32px;
-  padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-  border-radius: 16px;
-  border: 1px solid #e8e8e8;
-  transition: all 0.3s ease;
-}
-
-.form-section:hover {
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-  transform: translateY(-2px);
-}
-
-.section-header {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #667eea;
+  justify-content: center;
+  text-align: center;
 }
 
-.section-icon {
+.hero-content {
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-family: 'D-DIN-Bold', 'Arial', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 0.96px;
+  line-height: 1.0;
+  margin-bottom: 20px;
+}
+
+.hero-subtitle {
+  font-family: 'D-DIN', 'Arial', sans-serif;
+  font-size: 16px;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* 滚动指示器 */
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.scroll-arrow {
+  width: 24px;
+  height: 24px;
+  border-right: 2px solid rgba(240, 240, 250, 0.6);
+  border-bottom: 2px solid rgba(240, 240, 250, 0.6);
+  transform: rotate(45deg);
+  animation: scrollBounce 2s infinite;
+}
+
+.scroll-text {
+  font-family: 'D-DIN', 'Arial', sans-serif;
+  font-size: 10px;
+  color: rgba(240, 240, 250, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes scrollBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: rotate(45deg) translateY(0);
+  }
+  40% {
+    transform: rotate(45deg) translateY(-10px);
+  }
+  60% {
+    transform: rotate(45deg) translateY(-5px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* 表单区域 */
+.form-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.space-form {
+  background: transparent;
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 48px;
+  padding: 0;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(240, 240, 250, 0.35);
+}
+
+.group-icon {
   font-size: 24px;
   margin-right: 12px;
 }
 
-.section-title {
+.group-title {
+  font-family: 'D-DIN-Bold', 'Arial', sans-serif;
   font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 /* 表单标签 */
 .form-label {
-  font-size: 15px;
-  font-weight: 500;
-  color: #555;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
+  margin-bottom: 8px;
+  display: block;
 }
 
-/* 自定义输入框 */
-.custom-input :deep(.ant-input),
-.custom-input :deep(.ant-picker) {
-  border-radius: 12px;
-  border: 2px solid #e8e8e8;
-  transition: all 0.3s ease;
-}
-
-.custom-input :deep(.ant-input:hover),
-.custom-input :deep(.ant-picker:hover) {
-  border-color: #667eea;
-}
-
-.custom-input :deep(.ant-input:focus),
-.custom-input :deep(.ant-picker-focused) {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* 自定义选择框 */
-.custom-select :deep(.ant-select-selector) {
-  border-radius: 12px !important;
-  border: 2px solid #e8e8e8 !important;
-  transition: all 0.3s ease;
-}
-
-.custom-select:hover :deep(.ant-select-selector) {
-  border-color: #667eea !important;
-}
-
-.custom-select :deep(.ant-select-focused .ant-select-selector) {
-  border-color: #667eea !important;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-}
-
-/* 天数显示 - 紧凑版 */
-.days-display-compact {
+/* 天数显示 */
+.days-display {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 40px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  color: white;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
+  color: #f0f0fa;
 }
 
-.days-display-compact .days-value {
+.days-display .days-value {
   font-size: 24px;
   font-weight: 700;
   margin-right: 4px;
 }
 
-.days-display-compact .days-unit {
+.days-display .days-unit {
   font-size: 14px;
 }
 
@@ -547,103 +518,142 @@ const handleSubmit = async () => {
 .preference-tag :deep(.ant-checkbox-wrapper) {
   margin: 0 !important;
   padding: 8px 16px;
-  border: 2px solid #e8e8e8;
-  border-radius: 20px;
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
   transition: all 0.3s ease;
-  background: white;
-  font-size: 14px;
+  background: rgba(240, 240, 250, 0.1);
+  font-size: 13px;
+  color: #f0f0fa;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 .preference-tag :deep(.ant-checkbox-wrapper:hover) {
-  border-color: #667eea;
-  background: #f5f7ff;
+  border-color: #f0f0fa;
+  background: rgba(240, 240, 250, 0.2);
 }
 
 .preference-tag :deep(.ant-checkbox-wrapper-checked) {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-/* 自定义文本域 */
-.custom-textarea :deep(.ant-input) {
-  border-radius: 12px;
-  border: 2px solid #e8e8e8;
-  transition: all 0.3s ease;
-}
-
-.custom-textarea :deep(.ant-input:hover) {
-  border-color: #667eea;
-}
-
-.custom-textarea :deep(.ant-input:focus) {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #f0f0fa;
+  background: rgba(240, 240, 250, 0.3);
+  color: #f0f0fa;
 }
 
 /* 提交按钮 */
 .submit-button {
+  width: 100%;
   height: 56px;
-  border-radius: 28px;
-  font-size: 18px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
-.submit-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+.submit-button:hover:not(:disabled) {
+  background: rgba(240, 240, 250, 0.2);
 }
 
-.submit-button:active {
-  transform: translateY(0);
-}
-
-.button-icon {
-  margin-right: 8px;
-  font-size: 20px;
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* 加载容器 */
 .loading-container {
   text-align: center;
   padding: 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-  border-radius: 16px;
-  border: 2px dashed #667eea;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px dashed rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
 }
 
 .loading-status {
   margin-top: 16px;
-  color: #667eea;
-  font-size: 18px;
-  font-weight: 500;
+  color: #f0f0fa;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
-/* 动画 */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Ant Design 组件覆盖 */
+:deep(.ant-input),
+:deep(.ant-picker) {
+  background: rgba(240, 240, 250, 0.1) !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  color: #f0f0fa !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.17px !important;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+:deep(.ant-input::placeholder),
+:deep(.ant-picker-input > input::placeholder) {
+  color: rgba(240, 240, 250, 0.5) !important;
+}
+
+:deep(.ant-input:hover),
+:deep(.ant-picker:hover) {
+  border-color: #f0f0fa !important;
+}
+
+:deep(.ant-input:focus),
+:deep(.ant-picker-focused) {
+  border-color: #f0f0fa !important;
+  box-shadow: 0 0 0 2px rgba(240, 240, 250, 0.1) !important;
+}
+
+:deep(.ant-select-selector) {
+  background: rgba(240, 240, 250, 0.1) !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  color: #f0f0fa !important;
+  border-radius: 4px !important;
+}
+
+:deep(.ant-select-selection-item) {
+  color: #f0f0fa !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.17px !important;
+}
+
+:deep(.ant-select-arrow) {
+  color: #f0f0fa !important;
+}
+
+:deep(.ant-select-dropdown) {
+  background: #000000 !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+}
+
+:deep(.ant-select-item) {
+  color: #f0f0fa !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.17px !important;
+}
+
+:deep(.ant-select-item-option-selected) {
+  background: rgba(240, 240, 250, 0.2) !important;
+}
+
+:deep(.ant-textarea) {
+  background: rgba(240, 240, 250, 0.1) !important;
+  border: 1px solid rgba(240, 240, 250, 0.35) !important;
+  color: #f0f0fa !important;
+  border-radius: 4px !important;
+}
+
+:deep(.ant-textarea::placeholder) {
+  color: rgba(240, 240, 250, 0.5) !important;
+}
+
+:deep(.ant-progress-bg) {
+  background: #f0f0fa !important;
+}
+
+:deep(.ant-form-item-label > label) {
+  color: #f0f0fa !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.17px !important;
 }
 </style>
 

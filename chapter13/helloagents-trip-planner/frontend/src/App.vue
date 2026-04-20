@@ -1,18 +1,6 @@
 <template>
   <div id="app">
-    <a-layout style="min-height: 100vh">
-      <a-layout-header style="background: #001529; padding: 0 50px">
-        <div style="color: white; font-size: 24px; font-weight: bold">
-          🌍 HelloAgents智能旅行助手
-        </div>
-      </a-layout-header>
-      <a-layout-content style="padding: 24px">
-        <router-view />
-      </a-layout-content>
-      <a-layout-footer style="text-align: center">
-        HelloAgents智能旅行助手 ©2025 基于HelloAgents框架
-      </a-layout-footer>
-    </a-layout>
+    <router-view />
   </div>
 </template>
 
@@ -21,8 +9,23 @@
 
 <style>
 #app {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    'Noto Sans', sans-serif;
+  font-family: 'D-DIN', 'Arial', 'Verdana', sans-serif;
+  background-color: #000000;
+  min-height: 100vh;
+}
+
+/* Global text styling */
+#app * {
+  text-transform: uppercase;
+}
+
+#app h1, #app h2, #app h3, #app h4, #app h5, #app h6 {
+  font-family: 'D-DIN-Bold', 'Arial', 'Verdana', sans-serif;
+  letter-spacing: 0.96px;
+}
+
+#app p, #app span, #app div, #app label, #app input, #app textarea, #app select, #app button {
+  letter-spacing: 1.17px;
 }
 </style>
 

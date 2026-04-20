@@ -1,6 +1,6 @@
 ---
-trigger: glob
-glob: chapter13\helloagents-trip-planner\frontend\*
+trigger: always_on
+alwaysApply: true
 ---
 # Design System Inspired by SpaceX
 

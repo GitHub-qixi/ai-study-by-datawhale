@@ -1,7 +1,8 @@
 ---
-trigger: glob
-glob: chapter13/*
+trigger: always_on
+alwaysApply: true
 ---
+
 # 🌍 全局开发规范 (Globe Rules)
 
 # HelloAgents智能旅行助手 🌍✈️
