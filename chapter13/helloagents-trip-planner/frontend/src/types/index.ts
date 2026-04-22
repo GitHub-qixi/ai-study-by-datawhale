@@ -54,6 +54,7 @@ export interface DayPlan {
   hotel?: Hotel
   attractions: Attraction[]
   meals: Meal[]
+  daily_suggestions?: string
 }
 
 export interface WeatherInfo {

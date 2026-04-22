@@ -257,6 +257,12 @@
                   <span v-if="meal.description"> - {{ meal.description }}</span>
                 </a-descriptions-item>
               </a-descriptions>
+
+              <!-- 每日建议(穿衣建议等) -->
+              <a-divider v-if="day.daily_suggestions" orientation="left">💡 每日建议</a-divider>
+              <div v-if="day.daily_suggestions" class="daily-suggestions">
+                {{ day.daily_suggestions }}
+              </div>
             </a-collapse-panel>
           </a-collapse>
         </a-card>
@@ -1550,6 +1556,19 @@ const drawRoutes = (AMap: any, attractions: any[]) => {
 :deep(.ant-descriptions-bordered .ant-descriptions-item-label),
 :deep(.ant-descriptions-bordered .ant-descriptions-item-content) {
   border-color: rgba(240, 240, 250, 0.35);
+}
+
+/* 每日建议样式 */
+.daily-suggestions {
+  padding: 16px;
+  background: rgba(240, 240, 250, 0.1);
+  border: 1px solid rgba(240, 240, 250, 0.35);
+  border-radius: 4px;
+  color: #f0f0fa;
+  font-size: 13px;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 1.17px;
 }
 
 /* List样式 */

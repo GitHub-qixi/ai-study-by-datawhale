@@ -104,6 +104,7 @@ class DayPlan(BaseModel):
     hotel: Optional[Hotel] = Field(default=None, description="推荐酒店")
     attractions: List[Attraction] = Field(default=[], description="景点列表")
     meals: List[Meal] = Field(default=[], description="餐饮列表")
+    daily_suggestions: Optional[str] = Field(default=None, description="每日建议(包括穿衣建议等)")
 
 
 class WeatherInfo(BaseModel):

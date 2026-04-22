@@ -7,6 +7,7 @@ from hello_agents.tools import MCPTool
 from ..services.llm_service import get_llm
 from ..models.schemas import TripRequest, TripPlan, DayPlan, Attraction, Meal, WeatherInfo, Location, Hotel
 from ..config import get_settings
+from ..tool.weather_advice_tool import ClothingAdviceTool
 
 # ============ Agent提示词 ============
 
@@ -112,7 +113,8 @@ PLANNER_AGENT_PROMPT = """你是行程规划专家。你的任务是根据景点
         {"type": "breakfast", "name": "早餐推荐", "description": "早餐描述", "estimated_cost": 30},
         {"type": "lunch", "name": "午餐推荐", "description": "午餐描述", "estimated_cost": 50},
         {"type": "dinner", "name": "晚餐推荐", "description": "晚餐描述", "estimated_cost": 80}
-      ]
+      ],
+      "daily_suggestions": "根据天气的穿衣建议和当日注意事项"
     }
   ],
   "weather_info": [
@@ -149,6 +151,7 @@ PLANNER_AGENT_PROMPT = """你是行程规划专家。你的任务是根据景点
    - 餐饮预估费用(estimated_cost)
    - 酒店预估费用(estimated_cost)
    - 预算汇总(budget)包含各项总费用
+8. **使用穿衣建议工具**: 对于每一天,根据当天的天气信息(day_temp和day_weather),调用get_clothing_advice工具获取穿衣建议,并将建议放入daily_suggestions字段中。例如: [TOOL_CALL:get_clothing_advice:temperature=25,weather_condition=晴]
 """
 
 
@@ -173,6 +176,8 @@ class MultiAgentTripPlanner:
                 auto_expand=True
             )
             self.amap_tool.expandable=True
+
+            
 
             # 创建景点搜索Agent
             print("  - 创建景点搜索Agent...")
@@ -201,18 +206,24 @@ class MultiAgentTripPlanner:
             )
             self.hotel_agent.add_tool(self.amap_tool)
 
-            # 创建行程规划Agent(不需要工具)
+            # 创建行程规划Agent(添加穿衣建议工具)
             print("  - 创建行程规划Agent...")
+            
+            # 实例化穿衣建议工具类
+            clothing_tool = ClothingAdviceTool()
+
             self.planner_agent = SimpleAgent(
                 name="行程规划专家",
                 llm=self.llm,
                 system_prompt=PLANNER_AGENT_PROMPT
             )
-
+            # 添加工具到Agent
+            self.planner_agent.add_tool(clothing_tool)
             print(f"✅ 多智能体系统初始化成功")
             print(f"   景点搜索Agent: {len(self.attraction_agent.list_tools())} 个工具")
             print(f"   天气查询Agent: {len(self.weather_agent.list_tools())} 个工具")
             print(f"   酒店推荐Agent: {len(self.hotel_agent.list_tools())} 个工具")
+            print(f"   行程规划Agent: {len(self.planner_agent.list_tools())} 个工具")
 
         except Exception as e:
             print(f"❌ 多智能体系统初始化失败: {str(e)}")
@@ -319,6 +330,7 @@ class MultiAgentTripPlanner:
 3. 考虑景点之间的距离和交通方式
 4. 返回完整的JSON格式数据
 5. 景点的经纬度坐标要真实准确
+6. 需要为
 """
         if request.free_text_input:
             query += f"\n**额外要求:** {request.free_text_input}"
