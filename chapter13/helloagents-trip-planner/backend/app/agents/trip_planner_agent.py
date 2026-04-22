@@ -282,13 +282,13 @@ class MultiAgentTripPlanner:
         """构建景点搜索查询 - 直接包含工具调用"""
         keywords = []
         if request.preferences:
-            # 只取第一个偏好作为关键词
-            keywords = request.preferences[0]
+            keywords = ', '.join(request.preferences)
         else:
             keywords = "景点"
 
         # 直接返回工具调用格式
-        query = f"请使用amap_maps_text_search工具搜索{request.city}的{keywords}相关景点。\n[TOOL_CALL:amap_maps_text_search:keywords={keywords},city={request.city}]"
+        # query = f"请使用amap_maps_text_search工具搜索{request.city}的{keywords}相关景点。\n[TOOL_CALL:amap_maps_text_search:keywords={keywords},city={request.city}]"
+        query = f"请使用amap_maps_text_search工具搜索{request.city}的{keywords}相关景点。"
         return query
 
     def _build_planner_query(self, request: TripRequest, attractions: str, weather: str, hotels: str = "") -> str:
